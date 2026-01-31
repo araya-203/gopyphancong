@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Khai báo phân công</title>
+
+<style>
+body {
+  background: #020617;
+  color: #e5e7eb;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.box {
+  width: 520px;
+  border: 2px solid #facc15;
+  border-radius: 18px;
+  padding: 24px;
+}
+label { display: block; margin-top: 12px; }
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+}
+.checkbox-group label {
+  display: block;
+}
+button {
+  margin-top: 18px;
+  width: 100%;
+  padding: 12px;
+  background: #facc15;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h3>Khai báo điều chỉnh phân công</h3>
+
+  <label>Họ tên:</label>
+  <input id="name">
+
+  <label>Đã làm:</label>
+  <div class="checkbox-group">
+    <label><input type="checkbox" value="Kế hoạch"> Kế hoạch</label>
+    <label><input type="checkbox" value="GG Form"> GG Form</label>
+    <label><input type="checkbox" value="Canva"> Canva</label>
+    <label><input type="checkbox" value="Bài truyền thông"> Bài truyền thông</label>
+    <label><input type="checkbox" value="Dự trù kinh phí"> Dự trù kinh phí</label>
+    <label><input type="checkbox" value="Nội dung khác"> Nội dung khác</label>
+  </div>
+
+  <label>Minh chứng (link):</label>
+  <input id="proof">
+
+  <label>Phần việc sổ phân công giao:</label>
+  <div class="checkbox-group">
+    <label><input type="checkbox" value="Kế hoạch"> Kế hoạch</label>
+    <label><input type="checkbox" value="GG Form"> GG Form</label>
+    <label><input type="checkbox" value="Canva"> Canva</label>
+    <label><input type="checkbox" value="Bài truyền thông"> Bài truyền thông</label>
+    <label><input type="checkbox" value="Dự trù kinh phí"> Dự trù kinh phí</label>
+    <label><input type="checkbox" value="Nội dung khác"> Nội dung khác</label>
+  </div>
+
+  <label>Của ai:</label>
+  <input id="owner">
+
+  <button onclick="submitData()">Gửi khai báo</button>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXetxf7leEhxag8MuLjs4TPJovEC8FVUHGvNMfDi4Ast_b2MGqkba_6Gdi_kwsKzAuSw/exec";
+
+function getCheckedValues(startIndex, endIndex) {
+  const boxes = document.querySelectorAll("input[type=checkbox]");
+  let values = [];
+  for (let i = startIndex; i < endIndex; i++) {
+    if (boxes[i].checked) values.push(boxes[i].value);
+  }
+  return values;
+}
+
+function submitData() {
+  const data = {
+    name: document.getElementById("name").value,
+    done: getCheckedValues(0,6),
+    proof: document.getElementById("proof").value,
+    assigned: getCheckedValues(6,12),
+    owner: document.getElementById("owner").value
+  };
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify(data)
+  }).then(() => alert("Đã gửi khai báo!"));
+}
+</script>
+
+</body>
+</html>
