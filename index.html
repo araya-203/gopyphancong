@@ -10,7 +10,6 @@ body{
   margin:0;
   font-family: Arial, sans-serif;
   background:#0b1220;
-  color:#000;
 }
 .container{
   max-width:900px;
@@ -55,9 +54,6 @@ input[type=text], textarea{
 }
 .subbox{
   margin-top:15px;
-  padding:15px;
-  border-radius:10px;
-  background:#f4f4f4;
 }
 .hidden{
   display:none;
@@ -88,44 +84,42 @@ input[type=text], textarea{
 </div>
 
 <div class="section">
-  <label>Hoạt động <span id="banName">[BẠN]</span> muốn khai báo</label>
+  <label>Hoạt động <span class="ban">[BẠN]</span> muốn khai báo</label>
   <div class="box" id="activityBox"></div>
 </div>
 
 <div class="section hidden" id="workSection">
-  <label><span id="banName2">[BẠN]</span> đã làm những gì</label>
+  <label><span class="ban">[BẠN]</span> đã làm những gì</label>
   <div class="box" id="workBox"></div>
 </div>
 
 <div class="section hidden" id="proofSection">
-  <label>Minh chứng (link - mở quyền truy cập):</label>
+  <label>Minh chứng (link / nội dung):</label>
   <div id="proofBox"></div>
 </div>
 
-<div class="section hidden" id="assignSection">
-  <label>NHỮNG CÔNG VIỆC ĐƯỢC PHÂN CÔNG CHO <span id="banName3">[BẠN]</span> TRÊN SỔ PHÂN CÔNG HIỆN LÀ CỦA AI?</label>
-  <div id="assignBox"></div>
-</div>
-
-<button class="submit-btn">GỬI KHAI BÁO</button>
+<button class="submit-btn" onclick="gui()">GỬI KHAI BÁO</button>
 
 </div>
 
 <script>
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxNufHwLOlwfebcHPg_SYwVe-vJdvR2rmod1WbNkjSoh4TvgQGYCVhHff4j2jCCCLbrvg/exec";
+
+/* ===== DATA ===== */
 const activities = [
 "95 năm rực cháy khát vọng tuổi trẻ",
 "Không gian học nhóm",
 "Tuổi trẻ Địa chất tự hào dưới cờ Đảng",
-"Chương trình “Hành trình thanh niên theo dấu chân về nguồn”",
+"Chương trình Hành trình thanh niên theo dấu chân về nguồn",
 "Cuộc thi tên lửa nước",
 "Workshop làm hoa - vòng tay",
-"Kêu gọi hưởng ứng “Giờ trái đất”",
-"Những câu chuyện “Thời Hoa Lửa”",
-"Tổ chức hoạt động “Thử thách 7 ngày sống xanh”",
-"Chuyên đề kỹ năng “Vững vàng báo cáo - Tự tin lan tỏa tri thức”",
+"Kêu gọi hưởng ứng Giờ trái đất",
+"Những câu chuyện Thời Hoa Lửa",
+"Thử thách 7 ngày sống xanh",
+"Chuyên đề kỹ năng",
 "Chủ nhật xanh",
-"Tham gia tốt Hội thi “Sáng mãi tên người”, năm 2026",
-"Buổi gặp mặt “Tiếp lửa truyền thống – Nối tiếp hành trình Tuổi trẻ”",
+"Sáng mãi tên người 2026",
+"Tiếp lửa truyền thống",
 "Thanh niên tiên tiến làm theo lời Bác",
 "Tọa đàm ND-BMT",
 "Lớp cảm tình Đoàn",
@@ -142,6 +136,7 @@ const works = [
 let selectedActivities = [];
 let selectedWorks = [];
 
+/* ===== RENDER ACTIVITIES ===== */
 const activityBox = document.getElementById("activityBox");
 activities.forEach(a=>{
   const div=document.createElement("div");
@@ -154,11 +149,14 @@ activities.forEach(a=>{
     }else{
       selectedActivities=selectedActivities.filter(x=>x!==a);
     }
-    document.getElementById("workSection").classList.toggle("hidden",selectedActivities.length===0);
+    document.getElementById("workSection").classList.toggle(
+      "hidden", selectedActivities.length===0
+    );
   };
   activityBox.appendChild(div);
 });
 
+/* ===== RENDER WORKS ===== */
 const workBox=document.getElementById("workBox");
 works.forEach(w=>{
   const div=document.createElement("div");
@@ -172,11 +170,11 @@ works.forEach(w=>{
       selectedWorks=selectedWorks.filter(x=>x!==w);
     }
     renderProof();
-    renderAssign();
   };
   workBox.appendChild(div);
 });
 
+/* ===== PROOF ===== */
 function renderProof(){
   const box=document.getElementById("proofBox");
   box.innerHTML="";
@@ -184,36 +182,58 @@ function renderProof(){
     const d=document.createElement("div");
     d.className="work-item";
     if(w==="BÀI TRUYỀN THÔNG"||w==="VIẾT MAIL"){
-      d.innerHTML=`<label>${w} – Minh chứng:</label><textarea rows="4"></textarea>`;
+      d.innerHTML=`<b>${w}</b><textarea rows="4" placeholder="Nhập nội dung / link"></textarea>`;
     }else{
-      d.innerHTML=`<label>${w} – Link:</label><input type="text">`;
+      d.innerHTML=`<b>${w}</b><input type="text" placeholder="Dán link minh chứng">`;
     }
     box.appendChild(d);
   });
-  document.getElementById("proofSection").classList.toggle("hidden",selectedWorks.length===0);
+  document.getElementById("proofSection").classList.toggle(
+    "hidden", selectedWorks.length===0
+  );
 }
 
-function renderAssign(){
-  const box=document.getElementById("assignBox");
-  box.innerHTML="";
-  selectedActivities.forEach(a=>{
-    works.filter(w=>!selectedWorks.includes(w)).forEach(w=>{
-      const d=document.createElement("div");
-      d.className="work-item";
-      d.innerHTML=`<b>${a}</b> — ${w} của <input type="text" style="width:200px">`;
-      box.appendChild(d);
-    });
-  });
-  document.getElementById("assignSection").classList.toggle("hidden",selectedActivities.length===0);
-}
-
+/* ===== NAME SHORT ===== */
 document.getElementById("fullname").oninput=function(){
   const parts=this.value.trim().split(" ");
   if(parts.length>=2){
     const name=parts.slice(-2).join(" ");
-    document.querySelectorAll("#banName,#banName2,#banName3").forEach(e=>e.innerText=name);
+    document.querySelectorAll(".ban").forEach(e=>e.innerText=name);
   }
 };
+
+/* ===== SUBMIT ===== */
+function gui(){
+  const fullname=document.getElementById("fullname").value.trim();
+  if(!fullname||selectedActivities.length===0||selectedWorks.length===0){
+    alert("Vui lòng nhập đủ thông tin!");
+    return;
+  }
+
+  const proofs=[];
+  document.querySelectorAll("#proofBox input, #proofBox textarea")
+    .forEach(el=>proofs.push(el.value));
+
+  const data={
+    hoten:fullname,
+    hoatdong:selectedActivities.join(" | "),
+    congviec:selectedWorks.join(" | "),
+    minhchung:proofs.join(" | ")
+  };
+
+  fetch(WEB_APP_URL,{
+    method:"POST",
+    body:JSON.stringify(data),
+    headers:{"Content-Type":"application/json"}
+  })
+  .then(r=>r.json())
+  .then(()=>{
+    alert("✅ Gửi thành công!");
+  })
+  .catch(()=>{
+    alert("❌ Lỗi gửi dữ liệu");
+  });
+}
 </script>
 
 </body>
