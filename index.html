@@ -2,110 +2,219 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Khai báo phân công</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KHAI BÁO ĐIỀU CHỈNH PHÂN CÔNG</title>
 
 <style>
-body {
-  background: #020617;
-  color: #e5e7eb;
+body{
+  margin:0;
   font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  background:#0b1220;
+  color:#000;
 }
-.box {
-  width: 520px;
-  border: 2px solid #facc15;
-  border-radius: 18px;
-  padding: 24px;
+.container{
+  max-width:900px;
+  margin:30px auto;
+  background:#fff;
+  padding:25px;
+  border-radius:12px;
 }
-label { display: block; margin-top: 12px; }
-input, textarea {
-  width: 100%;
-  padding: 8px;
-  border-radius: 6px;
+h1{
+  text-align:center;
+  font-size:24px;
+  margin-bottom:25px;
 }
-.checkbox-group label {
-  display: block;
+label{
+  font-weight:bold;
 }
-button {
-  margin-top: 18px;
-  width: 100%;
-  padding: 12px;
-  background: #facc15;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
+input[type=text], textarea{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  margin-bottom:20px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+.section{
+  margin-bottom:30px;
+}
+.box{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.choice{
+  padding:10px 14px;
+  border:1px solid #333;
+  border-radius:20px;
+  cursor:pointer;
+  background:#fff;
+}
+.choice.active{
+  background:#ffd400;
+}
+.subbox{
+  margin-top:15px;
+  padding:15px;
+  border-radius:10px;
+  background:#f4f4f4;
+}
+.hidden{
+  display:none;
+}
+.work-item{
+  margin-bottom:15px;
+}
+.submit-btn{
+  width:100%;
+  padding:14px;
+  font-size:16px;
+  border:none;
+  border-radius:8px;
+  background:#ffd400;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
+<div class="container">
 
-<div class="box">
-  <h3>Khai báo điều chỉnh phân công</h3>
+<h1>KHAI BÁO ĐIỀU CHỈNH PHÂN CÔNG</h1>
 
-  <label>Họ tên:</label>
-  <input id="name">
+<div class="section">
+  <label>Họ và tên:</label>
+  <input type="text" id="fullname" placeholder="Nhập họ và tên">
+</div>
 
-  <label>Đã làm:</label>
-  <div class="checkbox-group">
-    <label><input type="checkbox" value="Kế hoạch"> Kế hoạch</label>
-    <label><input type="checkbox" value="GG Form"> GG Form</label>
-    <label><input type="checkbox" value="Canva"> Canva</label>
-    <label><input type="checkbox" value="Bài truyền thông"> Bài truyền thông</label>
-    <label><input type="checkbox" value="Dự trù kinh phí"> Dự trù kinh phí</label>
-    <label><input type="checkbox" value="Nội dung khác"> Nội dung khác</label>
-  </div>
+<div class="section">
+  <label>Hoạt động <span id="banName">[BẠN]</span> muốn khai báo</label>
+  <div class="box" id="activityBox"></div>
+</div>
 
-  <label>Minh chứng (link):</label>
-  <input id="proof">
+<div class="section hidden" id="workSection">
+  <label><span id="banName2">[BẠN]</span> đã làm những gì</label>
+  <div class="box" id="workBox"></div>
+</div>
 
-  <label>Phần việc sổ phân công giao:</label>
-  <div class="checkbox-group">
-    <label><input type="checkbox" value="Kế hoạch"> Kế hoạch</label>
-    <label><input type="checkbox" value="GG Form"> GG Form</label>
-    <label><input type="checkbox" value="Canva"> Canva</label>
-    <label><input type="checkbox" value="Bài truyền thông"> Bài truyền thông</label>
-    <label><input type="checkbox" value="Dự trù kinh phí"> Dự trù kinh phí</label>
-    <label><input type="checkbox" value="Nội dung khác"> Nội dung khác</label>
-  </div>
+<div class="section hidden" id="proofSection">
+  <label>Minh chứng (link - mở quyền truy cập):</label>
+  <div id="proofBox"></div>
+</div>
 
-  <label>Của ai:</label>
-  <input id="owner">
+<div class="section hidden" id="assignSection">
+  <label>NHỮNG CÔNG VIỆC ĐƯỢC PHÂN CÔNG CHO <span id="banName3">[BẠN]</span> TRÊN SỔ PHÂN CÔNG HIỆN LÀ CỦA AI?</label>
+  <div id="assignBox"></div>
+</div>
 
-  <button onclick="submitData()">Gửi khai báo</button>
+<button class="submit-btn">GỬI KHAI BÁO</button>
+
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXetxf7leEhxag8MuLjs4TPJovEC8FVUHGvNMfDi4Ast_b2MGqkba_6Gdi_kwsKzAuSw/exec";
+const activities = [
+"95 năm rực cháy khát vọng tuổi trẻ",
+"Không gian học nhóm",
+"Tuổi trẻ Địa chất tự hào dưới cờ Đảng",
+"Chương trình “Hành trình thanh niên theo dấu chân về nguồn”",
+"Cuộc thi tên lửa nước",
+"Workshop làm hoa - vòng tay",
+"Kêu gọi hưởng ứng “Giờ trái đất”",
+"Những câu chuyện “Thời Hoa Lửa”",
+"Tổ chức hoạt động “Thử thách 7 ngày sống xanh”",
+"Chuyên đề kỹ năng “Vững vàng báo cáo - Tự tin lan tỏa tri thức”",
+"Chủ nhật xanh",
+"Tham gia tốt Hội thi “Sáng mãi tên người”, năm 2026",
+"Buổi gặp mặt “Tiếp lửa truyền thống – Nối tiếp hành trình Tuổi trẻ”",
+"Thanh niên tiên tiến làm theo lời Bác",
+"Tọa đàm ND-BMT",
+"Lớp cảm tình Đoàn",
+"Giao lưu cầu lông"
+];
 
-function getCheckedValues(startIndex, endIndex) {
-  const boxes = document.querySelectorAll("input[type=checkbox]");
-  let values = [];
-  for (let i = startIndex; i < endIndex; i++) {
-    if (boxes[i].checked) values.push(boxes[i].value);
-  }
-  return values;
-}
+const works = [
+"BẢN KẾ HOẠCH","FORM","CANVA","BÀI TRUYỀN THÔNG",
+"DỰ TRÙ KINH PHÍ","CHỤP ẢNH","DỰNG VIDEO",
+"KỊCH BẢN","TT VẬN ĐỘNG","VIẾT MAIL",
+"BÁO CÁO TK","NỘI DUNG KHÁC"
+];
 
-function submitData() {
-  const data = {
-    name: document.getElementById("name").value,
-    done: getCheckedValues(0,6),
-    proof: document.getElementById("proof").value,
-    assigned: getCheckedValues(6,12),
-    owner: document.getElementById("owner").value
+let selectedActivities = [];
+let selectedWorks = [];
+
+const activityBox = document.getElementById("activityBox");
+activities.forEach(a=>{
+  const div=document.createElement("div");
+  div.className="choice";
+  div.innerText=a;
+  div.onclick=()=>{
+    div.classList.toggle("active");
+    if(div.classList.contains("active")){
+      selectedActivities.push(a);
+    }else{
+      selectedActivities=selectedActivities.filter(x=>x!==a);
+    }
+    document.getElementById("workSection").classList.toggle("hidden",selectedActivities.length===0);
   };
+  activityBox.appendChild(div);
+});
 
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    body: JSON.stringify(data)
-  }).then(() => alert("Đã gửi khai báo!"));
+const workBox=document.getElementById("workBox");
+works.forEach(w=>{
+  const div=document.createElement("div");
+  div.className="choice";
+  div.innerText=w;
+  div.onclick=()=>{
+    div.classList.toggle("active");
+    if(div.classList.contains("active")){
+      selectedWorks.push(w);
+    }else{
+      selectedWorks=selectedWorks.filter(x=>x!==w);
+    }
+    renderProof();
+    renderAssign();
+  };
+  workBox.appendChild(div);
+});
+
+function renderProof(){
+  const box=document.getElementById("proofBox");
+  box.innerHTML="";
+  selectedWorks.forEach(w=>{
+    const d=document.createElement("div");
+    d.className="work-item";
+    if(w==="BÀI TRUYỀN THÔNG"||w==="VIẾT MAIL"){
+      d.innerHTML=`<label>${w} – Minh chứng:</label><textarea rows="4"></textarea>`;
+    }else{
+      d.innerHTML=`<label>${w} – Link:</label><input type="text">`;
+    }
+    box.appendChild(d);
+  });
+  document.getElementById("proofSection").classList.toggle("hidden",selectedWorks.length===0);
 }
+
+function renderAssign(){
+  const box=document.getElementById("assignBox");
+  box.innerHTML="";
+  selectedActivities.forEach(a=>{
+    works.filter(w=>!selectedWorks.includes(w)).forEach(w=>{
+      const d=document.createElement("div");
+      d.className="work-item";
+      d.innerHTML=`<b>${a}</b> — ${w} của <input type="text" style="width:200px">`;
+      box.appendChild(d);
+    });
+  });
+  document.getElementById("assignSection").classList.toggle("hidden",selectedActivities.length===0);
+}
+
+document.getElementById("fullname").oninput=function(){
+  const parts=this.value.trim().split(" ");
+  if(parts.length>=2){
+    const name=parts.slice(-2).join(" ");
+    document.querySelectorAll("#banName,#banName2,#banName3").forEach(e=>e.innerText=name);
+  }
+};
 </script>
 
 </body>
 </html>
-Add index page
