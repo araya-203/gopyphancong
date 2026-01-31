@@ -13,29 +13,20 @@ body{
 }
 .container{
   max-width:900px;
-  margin:30px auto;
+  margin:20px auto;
   background:#fff;
   padding:25px;
   border-radius:12px;
 }
 h1{
   text-align:center;
-  font-size:24px;
-  margin-bottom:25px;
+  text-transform:uppercase;
 }
-label{
-  font-weight:bold;
-}
-input[type=text], textarea{
+label{font-weight:bold;}
+input, textarea{
   width:100%;
   padding:10px;
-  margin-top:6px;
-  margin-bottom:20px;
-  border-radius:6px;
-  border:1px solid #ccc;
-}
-.section{
-  margin-bottom:30px;
+  margin:8px 0 18px;
 }
 .box{
   display:flex;
@@ -52,22 +43,14 @@ input[type=text], textarea{
 .choice.active{
   background:#ffd400;
 }
-.subbox{
-  margin-top:15px;
-}
-.hidden{
-  display:none;
-}
-.work-item{
-  margin-bottom:15px;
-}
-.submit-btn{
+.hidden{display:none;}
+button{
   width:100%;
   padding:14px;
   font-size:16px;
+  background:#ffd400;
   border:none;
   border-radius:8px;
-  background:#ffd400;
   cursor:pointer;
 }
 </style>
@@ -78,161 +61,104 @@ input[type=text], textarea{
 
 <h1>KHAI BÁO ĐIỀU CHỈNH PHÂN CÔNG</h1>
 
-<div class="section">
-  <label>Họ và tên:</label>
-  <input type="text" id="fullname" placeholder="Nhập họ và tên">
+<label>Họ và tên:</label>
+<input id="hoten" placeholder="Nhập họ và tên">
+
+<label>Hoạt động <span id="ban">[BẠN]</span> muốn khai báo</label>
+<div class="box" id="hoatdongBox"></div>
+
+<div id="congviecSection" class="hidden">
+  <label><span id="ban2">[BẠN]</span> đã làm những gì</label>
+  <div class="box" id="congviecBox"></div>
 </div>
 
-<div class="section">
-  <label>Hoạt động <span class="ban">[BẠN]</span> muốn khai báo</label>
-  <div class="box" id="activityBox"></div>
-</div>
-
-<div class="section hidden" id="workSection">
-  <label><span class="ban">[BẠN]</span> đã làm những gì</label>
-  <div class="box" id="workBox"></div>
-</div>
-
-<div class="section hidden" id="proofSection">
+<div id="minhchungSection" class="hidden">
   <label>Minh chứng (link / nội dung):</label>
-  <div id="proofBox"></div>
+  <textarea id="minhchung" rows="4"></textarea>
 </div>
 
-<button class="submit-btn" onclick="gui()">GỬI KHAI BÁO</button>
+<label>Công việc theo sổ phân công hiện là của ai?</label>
+<input id="cuaai" placeholder="Nhập tên">
+
+<button onclick="gui()">GỬI KHAI BÁO</button>
 
 </div>
 
 <script>
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxNufHwLOlwfebcHPg_SYwVe-vJdvR2rmod1WbNkjSoh4TvgQGYCVhHff4j2jCCCLbrvg/exec";
-
-/* ===== DATA ===== */
-const activities = [
+const hoatdongList=[
 "95 năm rực cháy khát vọng tuổi trẻ",
 "Không gian học nhóm",
 "Tuổi trẻ Địa chất tự hào dưới cờ Đảng",
 "Chương trình Hành trình thanh niên theo dấu chân về nguồn",
-"Cuộc thi tên lửa nước",
-"Workshop làm hoa - vòng tay",
-"Kêu gọi hưởng ứng Giờ trái đất",
-"Những câu chuyện Thời Hoa Lửa",
-"Thử thách 7 ngày sống xanh",
-"Chuyên đề kỹ năng",
-"Chủ nhật xanh",
-"Sáng mãi tên người 2026",
-"Tiếp lửa truyền thống",
-"Thanh niên tiên tiến làm theo lời Bác",
-"Tọa đàm ND-BMT",
-"Lớp cảm tình Đoàn",
 "Giao lưu cầu lông"
 ];
 
-const works = [
+const congviecList=[
 "BẢN KẾ HOẠCH","FORM","CANVA","BÀI TRUYỀN THÔNG",
-"DỰ TRÙ KINH PHÍ","CHỤP ẢNH","DỰNG VIDEO",
-"KỊCH BẢN","TT VẬN ĐỘNG","VIẾT MAIL",
-"BÁO CÁO TK","NỘI DUNG KHÁC"
+"DỰ TRÙ KINH PHÍ","CHỤP ẢNH","DỰNG VIDEO","NỘI DUNG KHÁC"
 ];
 
-let selectedActivities = [];
-let selectedWorks = [];
+let hoatdongChon=[];
+let congviecChon=[];
 
-/* ===== RENDER ACTIVITIES ===== */
-const activityBox = document.getElementById("activityBox");
-activities.forEach(a=>{
-  const div=document.createElement("div");
-  div.className="choice";
-  div.innerText=a;
-  div.onclick=()=>{
-    div.classList.toggle("active");
-    if(div.classList.contains("active")){
-      selectedActivities.push(a);
-    }else{
-      selectedActivities=selectedActivities.filter(x=>x!==a);
-    }
-    document.getElementById("workSection").classList.toggle(
-      "hidden", selectedActivities.length===0
-    );
+const hoatdongBox=document.getElementById("hoatdongBox");
+hoatdongList.forEach(h=>{
+  const d=document.createElement("div");
+  d.className="choice";
+  d.innerText=h;
+  d.onclick=()=>{
+    d.classList.toggle("active");
+    hoatdongChon.includes(h)
+      ? hoatdongChon=hoatdongChon.filter(x=>x!==h)
+      : hoatdongChon.push(h);
+    document.getElementById("congviecSection").classList.toggle("hidden",hoatdongChon.length===0);
   };
-  activityBox.appendChild(div);
+  hoatdongBox.appendChild(d);
 });
 
-/* ===== RENDER WORKS ===== */
-const workBox=document.getElementById("workBox");
-works.forEach(w=>{
-  const div=document.createElement("div");
-  div.className="choice";
-  div.innerText=w;
-  div.onclick=()=>{
-    div.classList.toggle("active");
-    if(div.classList.contains("active")){
-      selectedWorks.push(w);
-    }else{
-      selectedWorks=selectedWorks.filter(x=>x!==w);
-    }
-    renderProof();
+const congviecBox=document.getElementById("congviecBox");
+congviecList.forEach(c=>{
+  const d=document.createElement("div");
+  d.className="choice";
+  d.innerText=c;
+  d.onclick=()=>{
+    d.classList.toggle("active");
+    congviecChon.includes(c)
+      ? congviecChon=congviecChon.filter(x=>x!==c)
+      : congviecChon.push(c);
+    document.getElementById("minhchungSection").classList.toggle("hidden",congviecChon.length===0);
   };
-  workBox.appendChild(div);
+  congviecBox.appendChild(d);
 });
 
-/* ===== PROOF ===== */
-function renderProof(){
-  const box=document.getElementById("proofBox");
-  box.innerHTML="";
-  selectedWorks.forEach(w=>{
-    const d=document.createElement("div");
-    d.className="work-item";
-    if(w==="BÀI TRUYỀN THÔNG"||w==="VIẾT MAIL"){
-      d.innerHTML=`<b>${w}</b><textarea rows="4" placeholder="Nhập nội dung / link"></textarea>`;
-    }else{
-      d.innerHTML=`<b>${w}</b><input type="text" placeholder="Dán link minh chứng">`;
-    }
-    box.appendChild(d);
-  });
-  document.getElementById("proofSection").classList.toggle(
-    "hidden", selectedWorks.length===0
-  );
-}
-
-/* ===== NAME SHORT ===== */
-document.getElementById("fullname").oninput=function(){
-  const parts=this.value.trim().split(" ");
-  if(parts.length>=2){
-    const name=parts.slice(-2).join(" ");
-    document.querySelectorAll(".ban").forEach(e=>e.innerText=name);
+document.getElementById("hoten").oninput=function(){
+  const p=this.value.trim().split(" ");
+  if(p.length>=2){
+    const ten=p.slice(-2).join(" ");
+    document.getElementById("ban").innerText=ten;
+    document.getElementById("ban2").innerText=ten;
   }
 };
 
-/* ===== SUBMIT ===== */
 function gui(){
-  const fullname=document.getElementById("fullname").value.trim();
-  if(!fullname||selectedActivities.length===0||selectedWorks.length===0){
-    alert("Vui lòng nhập đủ thông tin!");
-    return;
-  }
-
-  const proofs=[];
-  document.querySelectorAll("#proofBox input, #proofBox textarea")
-    .forEach(el=>proofs.push(el.value));
-
   const data={
-    hoten:fullname,
-    hoatdong:selectedActivities.join(" | "),
-    congviec:selectedWorks.join(" | "),
-    minhchung:proofs.join(" | ")
+    hoten:document.getElementById("hoten").value,
+    tenrutgon:document.getElementById("ban").innerText,
+    hoatdong:hoatdongChon.join(", "),
+    congviecdalam:congviecChon.join(", "),
+    minhchung:document.getElementById("minhchung").value,
+    congviecphancong:"",
+    cuaai:document.getElementById("cuaai").value,
+    ghichu:""
   };
 
-  fetch(WEB_APP_URL,{
+  fetch("https://script.google.com/macros/s/AKfycbzL0Z0gHlc4bbTdS9EJHSHGRZZ7qOFhm9iefm8n8FKsbu33XBdUI--XHnNvuPdRIvIuSw/exec",{
     method:"POST",
     body:JSON.stringify(data),
     headers:{"Content-Type":"application/json"}
   })
-  .then(r=>r.json())
-  .then(()=>{
-    alert("✅ Gửi thành công!");
-  })
-  .catch(()=>{
-    alert("❌ Lỗi gửi dữ liệu");
-  });
+  .then(()=>alert("✅ Gửi thành công"))
+  .catch(()=>alert("❌ Lỗi gửi dữ liệu"));
 }
 </script>
 
